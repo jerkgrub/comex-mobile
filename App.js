@@ -14,6 +14,8 @@ import DrawerNavigator from './navigation/DrawerNavigator';
 import ChangePassScreen from './screens/preAuth/ChangePassScreen';
 import EventsScreen from './screens/postAuth/HomeDrawers/EventsScreen';
 
+// ryoiki tenkai
+
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
