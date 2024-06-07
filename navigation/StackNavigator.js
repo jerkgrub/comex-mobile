@@ -18,6 +18,7 @@ import BGCCommunityOutreachScreen from '../screens/postAuth/HomeDrawers/EventsSt
 import NUMoaCampusCleanupScreen from '../screens/postAuth/HomeDrawers/EventsStack/NUMoaCampusCleanupScreen';
 import ChangePassScreen from '../screens/preAuth/ChangePassScreen';
 import FormScreen from '../screens/postAuth/HomeDrawers/EventsStack/FormScreen';
+import OneEventScreen from '../screens/postAuth/HomeDrawers/EventsStack/OneEventScreen';
 
 const Stack = createStackNavigator();
 const StackNavigator = () => {
@@ -60,6 +61,7 @@ const StackNavigator = () => {
             <Stack.Screen name="BGC Community Outreach" component={BGCCommunityOutreachScreen} />
             <Stack.Screen name="NU Moa Cleanup" component={NUMoaCampusCleanupScreen} />
             <Stack.Screen name="Join Event Form" component={FormScreen} />
+            <Stack.Screen name="OneEventScreen" component={OneEventScreen} options={{ title: 'Event' }} />
 
         </Stack.Navigator>
     );

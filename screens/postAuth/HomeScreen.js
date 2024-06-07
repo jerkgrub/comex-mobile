@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   View,
@@ -14,12 +14,14 @@ import Carousel from "../../components/Carousel";
 import { ScrollView } from "react-native-gesture-handler";
 import { UserContext } from "../preAuth/RegisterScreen";
 import Post from "../../components/Post";
-import { EventsData } from "./HomeDrawers/EventsStack/EventsData";
 import { useNavigation } from "@react-navigation/native";
 import { ChatScreen } from "./HomeTabs/ChatScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { height } = Dimensions.get("window");
+
 const Tab = createBottomTabNavigator();
+
 const date = new Date().toLocaleDateString(undefined, {
   weekday: "long",
   year: "numeric",
@@ -29,212 +31,69 @@ const date = new Date().toLocaleDateString(undefined, {
 
 const HomeScreen = ({ navigation }) => {
   const { user } = React.useContext(UserContext);
+  const [events, setEvents] = useState([]);
+
+  const [parsedUser, setParsedUser] = useState(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await AsyncStorage.getItem("user");
+      if (user) {
+        setParsedUser(JSON.parse(user));
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("http://192.168.1.170:8000/api/event/all");
+        const data = await response.json();
+        setEvents(data.Events);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  if (!parsedUser) {
+    return null; // or a loading indicator
+  }
 
   return (
     <ScrollView>
-      <View
-        style={{
-          marginTop: 20,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
-          <Text
-            style={{
-              marginTop: 5,
-              fontSize: 30,
-              fontWeight: "bold",
-              textAlign: "left",
-              letterSpacing: 1,
-              color: "#2a2aa5",
-              marginLeft: 17,
-            }}
-          >
-            Welcome,
-          </Text>
-
-          <Text
-            style={{
-              marginTop: 5,
-              fontSize: 30,
-              fontWeight: "bold",
-              textAlign: "left",
-              letterSpacing: 1,
-              color: "#b6941a",
-              marginLeft: 10,
-              marginBottom: 20,
-            }}
-          >
-            {user.username}!
-          </Text>
+      <View style={{ marginTop: 20 }}>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.welcomeText}>Welcome,</Text>
+          <Text style={styles.userName}>{parsedUser.u_lname}</Text>
         </View>
 
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 16,
-            fontWeight: "bold",
-            textAlign: "left",
-            letterSpacing: 1,
-            color: "#65631a",
-            marginLeft: 17,
-          }}
-        >
-          {date}
-        </Text>
-        <Text
-          style={{
-            marginTop: 0,
-            fontSize: 29,
-            fontWeight: "bold",
-            textAlign: "left",
-            letterSpacing: 1,
-            color: "#2a2aa5",
-            marginLeft: 15,
-            marginBottom: 10,
-          }}
-        >
-          Featured Events
-        </Text>
+        <Text style={styles.dateText}>{date}</Text>
+        <Text style={styles.featuredEventsText}>Featured Events</Text>
         <Carousel />
 
-        <View
-          style={{
-            marginTop: 35,
-            borderBottomColor: "#d3d3d3",
-            borderBottomWidth: 1,
-          }}
-        />
+        <View style={styles.separator} />
 
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
-          <Text
-            style={{
-              marginTop: 40,
-              fontSize: 21,
-              fontWeight: "bold",
-              textAlign: "left",
-              letterSpacing: 1,
-              color: "#282830",
-              marginLeft: 15,
-              marginBottom: 20,
-            }}
-          >
-            Current Events
-          </Text>
-          <Text
-            style={{
-              marginTop: 40,
-              fontSize: 15,
-              // fontWeight: "bold",
-              letterSpacing: 1,
-              color: "#2fbad2",
-              marginLeft: 110,
-              marginBottom: 20,
-            }}
-          >
-            See all
-          </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.currentEventsText}>Current Events</Text>
+          <Text style={styles.seeAllText}>See all</Text>
         </View>
 
-        {/* posts map */}
-        {Object.values(EventsData()).flatMap((dateData) =>
-          dateData.dots.map((event, index) => (
-            <Post
-              key={`${event.name}-${index}`}
-              author={event.author}
-              title={event.name}
-              image={event.image}
-              navigation={navigation} // Pass the navigation prop here
-              onPress={(navigation) => () => navigation.navigate(event.screen)}
-            />
-          ))
-        )}
+        {events.map((event, index) => (
+          <Post
+            key={event._id}
+            author={event.event_organizer}
+            title={event.event_title}
+            image={event.event_image}
+            onPress={(eventData) =>
+              navigation.navigate("OneEventScreen", { eventData })
+            }
+            eventData={event} // Pass the event data to the onPress function
+          />
+        ))}
 
-        <View
-          style={{
-            marginTop: 35,
-            borderBottomColor: "#d3d3d3",
-            borderBottomWidth: 1,
-          }}
-        />
-
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
-          <Text
-            style={{
-              marginTop: 40,
-              fontSize: 21,
-              fontWeight: "bold",
-              textAlign: "left",
-              letterSpacing: 1,
-              color: "#282830",
-              marginLeft: 15,
-              marginBottom: 20,
-            }}
-          >
-            Upcoming Events
-          </Text>
-          <Text
-            style={{
-              marginTop: 40,
-              fontSize: 15,
-              // fontWeight: "bold",
-              textAlign: "left",
-              letterSpacing: 1,
-              color: "#2fbad2",
-              marginLeft: 90,
-              marginBottom: 20,
-            }}
-          >
-            See all
-          </Text>
-        </View>
-
-        {/* posts map */}
-        {Object.values(EventsData()).flatMap((dateData) =>
-          dateData.dots.map((event, index) => (
-            <Post
-              key={`${event.name}-${index}`}
-              author={event.author}
-              title={event.name}
-              image={event.image}
-              navigation={navigation} // Pass the navigation prop here
-              onPress={(navigation) => () => navigation.navigate(event.screen)}
-            />
-          ))
-        )}
-
-        {/* <Text style={{
-                      fontSize:12,
-                      marginLeft: 17,
-                      color: '#808080'
-                    }}>Zoren Matthew Blardony</Text>
-
-                    <Text style={{
-                      fontSize: 15,
-                      marginLeft: 17,
-                      fontWeight: 'bold',
-                    }}>NU MoA Campus Cleanup</Text>
-
-                <ImageBackground 
-                style={{
-                    marginTop: 0,
-                    height: height / 3,
-                    marginBottom: 50,
-                }}
-                resizeMode="contain"
-                source={require("../../assets/images/cleanup-drive.jpg")}
-                /> */}
+        <View style={styles.separator} />
       </View>
     </ScrollView>
   );
@@ -246,7 +105,6 @@ const HomeTabNavigator = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Chatroom") {
@@ -254,7 +112,6 @@ const HomeTabNavigator = () => {
           } else if (route.name === "Account") {
             iconName = focused ? "account" : "account-box";
           }
-
           return <Icon name={iconName} size={size} color={color} />;
         },
         headerShown: false,
@@ -275,6 +132,67 @@ const HomeTabNavigator = () => {
 };
 
 const styles = StyleSheet.create({
+  welcomeText: {
+    marginTop: 5,
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "left",
+    letterSpacing: 1,
+    color: "#2a2aa5",
+    marginLeft: 17,
+  },
+  userName: {
+    marginTop: 5,
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "left",
+    letterSpacing: 1,
+    color: "#b6941a",
+    marginLeft: 10,
+    marginBottom: 20,
+  },
+  dateText: {
+    marginTop: 5,
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "left",
+    letterSpacing: 1,
+    color: "#65631a",
+    marginLeft: 17,
+  },
+  featuredEventsText: {
+    marginTop: 0,
+    fontSize: 29,
+    fontWeight: "bold",
+    textAlign: "left",
+    letterSpacing: 1,
+    color: "#2a2aa5",
+    marginLeft: 15,
+    marginBottom: 10,
+  },
+  separator: {
+    marginTop: 35,
+    borderBottomColor: "#d3d3d3",
+    borderBottomWidth: 1,
+  },
+  currentEventsText: {
+    marginTop: 40,
+    fontSize: 21,
+    fontWeight: "bold",
+    textAlign: "left",
+    letterSpacing: 1,
+    color: "#282830",
+    marginLeft: 15,
+    marginBottom: 20,
+  },
+  seeAllText: {
+    marginTop: 40,
+    fontSize: 15,
+    letterSpacing: 1,
+    color: "#2fbad2",
+    marginLeft: 110,
+    marginBottom: 20,
+  },
   text: {
     marginTop: 0,
     fontSize: 15,

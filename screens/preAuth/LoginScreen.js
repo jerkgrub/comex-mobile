@@ -45,6 +45,7 @@ const LoginScreen = (props) => {
       if (token) {
         // Save the token and navigate to the home screen
         await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
         navigation.reset({
           index: 0,
           routes: [{ name: 'Drawer' }],
@@ -160,8 +161,6 @@ const LoginScreen = (props) => {
           </Text>
         </TouchableOpacity>
 
-        <SocialsLogin />
-
         <TouchableOpacity
           onPress={gotoRegister}
           style={{
@@ -181,6 +180,7 @@ const LoginScreen = (props) => {
             Create new account
           </Text>
         </TouchableOpacity>
+        
       </View>
     </SafeAreaView>
   );

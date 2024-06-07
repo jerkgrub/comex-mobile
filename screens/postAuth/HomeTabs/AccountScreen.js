@@ -6,16 +6,29 @@ import {
     ImageBackground,
 } from "react-native";
 
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../preAuth/RegisterScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { height } = Dimensions.get("window");
 
 
-const AccountScreen =(props)=>{   
+const AccountScreen =(props)=>{
+
+    const [parsedUser, setParsedUser] = useState(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await AsyncStorage.getItem("user");
+      if (user) {
+        setParsedUser(JSON.parse(user));
+      }
+    };
+    fetchUser();
+  }, []);
 
     const goChangePass=()=>{
         navigation.navigate('Change Pass');
@@ -81,18 +94,20 @@ const AccountScreen =(props)=>{
                     alignItems: "center",
                     marginVertical: 0,
                 }}>
-                    <Text 
-                    style={{
-                        fontSize: 20,
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        // letterSpacing: 1,
-                        color: "#2a2aa5",
-                        marginTop: 0,
-                        marginBottom: 8,
-                    }}>
-                        {user.username}</Text>
-
+                    {parsedUser && (
+                        <Text 
+                            style={{
+                                fontSize: 20,
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                // letterSpacing: 1,
+                                color: "#2a2aa5",
+                                marginTop: 0,
+                                marginBottom: 8,
+                            }}>
+                            {parsedUser.u_fname} {parsedUser.u_mname} {parsedUser.u_lname}
+                        </Text>
+                    )}
                     {/* <Text style={{
                            
                         fontSize: 15,
@@ -207,6 +222,6 @@ const AccountScreen =(props)=>{
 }
 
 const styles = StyleSheet.create({
-  });
+});
 
 export default AccountScreen;

@@ -1,11 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Text, ImageBackground, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const Post = ({ author, title, image, onPress, navigation }) => (
-  <TouchableOpacity style={styles.container} onPress={onPress(navigation)}>
+const Post = ({ author, title, image, onPress, eventData }) => (
+  <TouchableOpacity style={styles.container} onPress={() => onPress(eventData)}>
     <Text style={styles.author}>{author}</Text>
     <Text style={styles.title}>{title}</Text>
     <ImageBackground 
@@ -49,3 +48,4 @@ const styles = StyleSheet.create({
 });
 
 export default Post;
+  
