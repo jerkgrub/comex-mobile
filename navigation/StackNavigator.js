@@ -30,9 +30,10 @@ const StackNavigator = () => {
             headerStyle: { backgroundColor: '#35408e' },
             headerTintColor: '#f5e293',
         }}>
-            <Stack.Screen name="Home" 
+            <Stack.Screen name="HomeStack" 
             component={HomeScreen}
             options={{
+                title: 'Home',
                 headerLeft: () => {
                     return(
                         <TouchableOpacity>
