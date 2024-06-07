@@ -13,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "./RegisterScreen";
 import { PasswordInput } from "../../components/PasswordInput";
 import { LargeSize } from "../../components/Constants";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import SocialsLogin from "../../components/SocialsLogin";
 
 const { height } = Dimensions.get("window");
@@ -92,7 +91,7 @@ const LoginScreen =(props)=>{
                     marginVertical: 20,
                 }}>
                     <TextInput 
-                    placeholder="Username"
+                    placeholder="Email"
                     placeholderTextColor={"#818181"}
                     onChangeText={(text)=>{setTheLuser(text)}}
                     style={{
