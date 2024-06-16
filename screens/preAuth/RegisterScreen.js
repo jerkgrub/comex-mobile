@@ -116,7 +116,7 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     axios
-      .post("http://192.168.1.170:8000/api/acc/new", newUser)
+      .post("http://192.168.43.82:8000/api/acc/new", newUser)
       .then((response) => {
         console.log("API Response:", response.data);
         if (response.data.newAcc) {

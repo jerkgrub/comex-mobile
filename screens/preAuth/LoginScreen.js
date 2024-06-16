@@ -11,7 +11,6 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { PasswordInput } from "../../components/PasswordInput";
 import { LargeSize } from "../../components/Constants";
-import SocialsLogin from "../../components/SocialsLogin";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -36,13 +35,13 @@ const LoginScreen = (props) => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.170:8000/api/login', {
+      const response = await axios.post('http://192.168.43.82:8000/api/login', {
         email: theLuser,
         password: theLpass,
       });
 
       const { message, token, user } = response.data;
-      if (token) {
+      if (token) { 
         // Save the token and navigate to the home screen
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('user', JSON.stringify(user));

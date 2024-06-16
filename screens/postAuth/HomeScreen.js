@@ -47,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("http://192.168.1.170:8000/api/event/all");
+        const response = await fetch("http://192.168.43.82:8000/api/event/all");
         const data = await response.json();
         setEvents(data.Events);
       } catch (error) {

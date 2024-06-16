@@ -42,7 +42,7 @@ const OneEventScreen = () => {
     }
 
     try {
-      const response = await fetch(`http://192.168.1.170:8000/api/event/get/attendee/${eventData._id}`);
+      const response = await fetch(`http://192.168.43.82:8000/api/event/get/attendee/${eventData._id}`);
       const result = await response.json();
 
       if (response.ok) {
@@ -71,7 +71,7 @@ const OneEventScreen = () => {
                   };
 
                   try {
-                    const registerResponse = await fetch(`http://192.168.1.170:8000/api/event/add/attendee/${eventData._id}`, {
+                    const registerResponse = await fetch(`http://192.168.43.82:8000/api/event/add/attendee/${eventData._id}`, {
                       method: "POST",
                       headers: {
                         "Content-Type": "application/json"
