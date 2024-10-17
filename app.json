@@ -1,5 +1,6 @@
 {
   "expo": {
+    "sdkVersion": "51.0.0",
     "name": "protodroid",
     "slug": "protodroid",
     "version": "1.0.0",
