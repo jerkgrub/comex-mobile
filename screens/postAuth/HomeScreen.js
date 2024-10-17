@@ -1,22 +1,21 @@
+// src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   View,
   Text,
   StyleSheet,
-  Button,
-  ImageBackground,
   Dimensions,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AccountScreen from "./HomeTabs/AccountScreen";
 import Carousel from "../../components/Carousel";
-import { ScrollView } from "react-native-gesture-handler";
-import { UserContext } from "../preAuth/RegisterScreen";
 import Post from "../../components/Post";
-import { useNavigation } from "@react-navigation/native";
-import { ChatScreen } from "./HomeTabs/ChatScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./../../hooks/api";
+import useFetchUserData from "./../../hooks/useFetchUserData";
 
 const { height } = Dimensions.get("window");
 
@@ -30,35 +29,57 @@ const date = new Date().toLocaleDateString(undefined, {
 });
 
 const HomeScreen = ({ navigation }) => {
-  const { user } = React.useContext(UserContext);
-  const [events, setEvents] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true); // Loading state for activities
 
-  const [parsedUser, setParsedUser] = useState(null);
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await AsyncStorage.getItem("user");
-      if (user) {
-        setParsedUser(JSON.parse(user));
-      }
-    };
-    fetchUser();
-  }, []);
+  // Use the custom hook to fetch user data
+  const { user, loading: userLoading } = useFetchUserData();
 
+  // Fetch activities from the /activity/all endpoint
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchActivities = async () => {
       try {
-        const response = await fetch("http://192.168.43.82:8000/api/event/all");
-        const data = await response.json();
-        setEvents(data.Events);
+        console.log("Sending request to /activity/all...");
+        const response = await api.get("/activity/all");
+        console.log("Activities Response:", response);
+
+        // Debug: Inspect the first activity's organizer
+        if (response.data && response.data.Activities && response.data.Activities.length > 0) {
+          console.log("First Activity Organizer:", response.data.Activities[0].organizer);
+        }
+
+        // Update state with the fetched activities
+        if (response.data && response.data.Activities) {
+          setActivities(response.data.Activities);
+        } else {
+          Alert.alert("Error", "No activities found.");
+        }
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching activities:", error);
+        Alert.alert("Error", "Unable to fetch activities.");
+      } finally {
+        setActivitiesLoading(false);
       }
     };
-    fetchEvents();
+    fetchActivities();
   }, []);
 
-  if (!parsedUser) {
-    return null; // or a loading indicator
+  // If either user data or activities are loading, show the loading indicator
+  if (userLoading || activitiesLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  // If user data is not available, show an error message
+  if (!user) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>User not found. Please log in.</Text>
+      </View>
+    );
   }
 
   return (
@@ -66,32 +87,47 @@ const HomeScreen = ({ navigation }) => {
       <View style={{ marginTop: 20 }}>
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.welcomeText}>Welcome,</Text>
-          <Text style={styles.userName}>{parsedUser.u_lname}</Text>
+          <Text style={styles.userName}>{user.lastName || "User"}</Text>
         </View>
 
         <Text style={styles.dateText}>{date}</Text>
-        <Text style={styles.featuredEventsText}>Featured Events</Text>
+        <Text style={styles.featuredEventsText}>Featured Activities</Text>
         <Carousel />
 
         <View style={styles.separator} />
 
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.currentEventsText}>Current Events</Text>
+          <Text style={styles.currentEventsText}>Current Activities</Text>
           <Text style={styles.seeAllText}>See all</Text>
         </View>
 
-        {events.map((event, index) => (
-          <Post
-            key={event._id}
-            author={event.event_organizer}
-            title={event.event_title}
-            image={event.event_image}
-            onPress={(eventData) =>
-              navigation.navigate("OneEventScreen", { eventData })
+        {activities.map((activity) => {
+          console.log("Rendering activity:", activity);
+          let authorName = "Unknown Organizer";
+
+          if (activity.organizer) {
+            if (typeof activity.organizer === "object") {
+              authorName = activity.organizer.name || "Unknown Organizer";
+            } else if (typeof activity.organizer === "string") {
+              authorName = activity.organizer;
             }
-            eventData={event} // Pass the event data to the onPress function
-          />
-        ))}
+          }
+
+          console.log("Author name to pass:", authorName);
+
+          return (
+            <Post
+              key={activity._id}
+              author={authorName}
+              title={activity.title || "Untitled Activity"}
+              image={activity.image || ""}
+              onPress={() =>
+                navigation.navigate("OneActivityScreen", { activity })
+              }
+              eventData={activity} // Pass the activity data to the onPress function
+            />
+          );
+        })}
 
         <View style={styles.separator} />
       </View>
@@ -125,7 +161,7 @@ const HomeTabNavigator = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Chatroom" component={ChatScreen} />
+      {/* <Tab.Screen name="Chatroom" component={ChatScreen} /> */}
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
   );
@@ -193,11 +229,21 @@ const styles = StyleSheet.create({
     marginLeft: 110,
     marginBottom: 20,
   },
-  text: {
-    marginTop: 0,
-    fontSize: 15,
-    marginBottom: 16,
-    marginLeft: 16,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: "red",
+    textAlign: "center",
   },
 });
 

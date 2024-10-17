@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Dimensions,
   View,
@@ -5,61 +6,92 @@ import {
   StyleSheet,
   SafeAreaView,
   ImageBackground,
-} from "react-native";
-import React, { useState } from "react";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
-import { PasswordInput } from "../../components/PasswordInput";
-import { LargeSize } from "../../components/Constants";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { PasswordInput } from '../../components/PasswordInput';
+import { LargeSize } from '../../components/Constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './../../hooks/api'
 
-const { height } = Dimensions.get("window");
+const { height } = Dimensions.get('window');
 
 const LoginScreen = (props) => {
+
   const navigation = useNavigation();
   const { route } = props;
   const { theUsername, thePassword } = route.params || {};
 
-  const [theLuser, setTheLuser] = useState(theUsername || "");
-  const [theLpass, setTheLpass] = useState(thePassword || "");
-
-  const gotoRegister = () => {
-    navigation.navigate("Register");
-  };
+  const [theLuser, setTheLuser] = useState(theUsername || '');
+  const [theLpass, setTheLpass] = useState(thePassword || '');
 
   const gotoHome = async () => {
-    if (theLuser.trim() === "" || theLpass.trim() === "") {
-      alert("Please fill up the form properly");
+
+    console.log("Login initiated with email:", theLuser); // Log email
+
+    if (theLuser.trim() === '' || theLpass.trim() === '') {
+      Alert.alert('Error', 'Please fill up the form properly');
       return;
     }
 
     try {
-      const response = await axios.post('http://192.168.43.82:8000/api/login', {
+      console.log("Sending login request..."); // Before sending the request
+      const response = await api.post('/login', {
         email: theLuser,
         password: theLpass,
       });
 
+      console.log("Login response:", response); // Log the response
+
       const { message, token, user } = response.data;
-      if (token) { 
-        // Save the token and navigate to the home screen
+      if (response.status === 200 && token) {
+        console.log("Login successful, token received:", token); // Log the token
+
+        // Save the token and user information in AsyncStorage
         await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('user', JSON.stringify(user));
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Drawer' }],
-      })
-      } else {
-        alert(message || "Login failed. Please try again.");
+        await AsyncStorage.setItem('userEmail', user.email);
+        await AsyncStorage.setItem('userUsertype', user.usertype);
+
+        // Handle redirection based on user type/message
+        const successMessages = {
+          'Successfully logged in as Admin': 'Drawer',
+          'Successfully logged in as Student': 'Drawer',
+          'Successfully logged in as NTP': 'Drawer',
+          'Successfully logged in as Comex Coordinator': 'Drawer',
+          'Successfully logged in as Faculty': 'Drawer',
+        };
+
+        const path = successMessages[message];
+        console.log("Redirecting to:", path); // Log redirection path
+
+        if (path) {
+          Alert.alert('Success', 'Logged in successfully');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: path }],
+          });
+        } else {
+          Alert.alert('Error', message);
+        }
       }
     } catch (error) {
-      alert("An error occurred. Please try again.");
-      console.error(error);
+      console.log("Login error:", error); // Log the error
+
+      const errorMessage = error.response?.data?.message || 'Something went wrong';
+      Alert.alert('Error', errorMessage);
     }
   };
 
   const forgotPass = () => {
-    navigation.navigate("Change Pass");
+    console.log("Navigating to 'ChangePass' screen");
+    navigation.navigate('ChangePass');
+  };
+
+  const gotoRegister = () => {
+    console.log("Navigating to 'Register' screen");
+    navigation.navigate('Register');
   };
 
   return (
@@ -70,26 +102,16 @@ const LoginScreen = (props) => {
           height: height / 3,
         }}
         resizeMode="contain"
-        source={require("../../assets/images/login-header.png")}
+        source={require('../../assets/images/login-header.png')}
       />
-
-      <View
-        style={{
-          padding: 20,
-        }}
-      >
-        <View
-          style={{
-            alignItems: "center",
-            marginVertical: 0,
-          }}
-        >
+      <View style={{ padding: 20 }}>
+        <View style={{ alignItems: 'center', marginVertical: 0 }}>
           <Text
             style={{
               fontSize: LargeSize,
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#2a2aa5",
+              fontWeight: 'bold',
+              textAlign: 'center',
+              color: '#2a2aa5',
               marginTop: -15,
               marginBottom: 8,
             }}
@@ -98,22 +120,16 @@ const LoginScreen = (props) => {
           </Text>
         </View>
 
-        <View
-          style={{
-            marginVertical: 20,
-          }}
-        >
+        <View style={{ marginVertical: 20 }}>
           <TextInput
             placeholder="Email"
-            placeholderTextColor={"#818181"}
-            onChangeText={(text) => {
-              setTheLuser(text);
-            }}
+            placeholderTextColor="#818181"
+            onChangeText={setTheLuser}
             value={theLuser}
             style={{
               fontSize: 15,
               padding: 18,
-              backgroundColor: "#e7e7e7",
+              backgroundColor: '#e7e7e7',
               borderRadius: 10,
               marginVertical: 10,
             }}
@@ -128,12 +144,7 @@ const LoginScreen = (props) => {
 
         <View>
           <TouchableOpacity onPress={forgotPass}>
-            <Text
-              style={{
-                fontSize: 12,
-                alignSelf: "flex-end",
-              }}
-            >
+            <Text style={{ fontSize: 12, alignSelf: 'flex-end' }}>
               Forgot your Password?
             </Text>
           </TouchableOpacity>
@@ -142,7 +153,7 @@ const LoginScreen = (props) => {
         <TouchableOpacity
           onPress={gotoHome}
           style={{
-            backgroundColor: "#2a2aa5",
+            backgroundColor: '#2a2aa5',
             paddingVertical: 15,
             borderRadius: 10,
             marginVertical: 20,
@@ -151,9 +162,9 @@ const LoginScreen = (props) => {
           <Text
             style={{
               fontSize: 15,
-              color: "white",
-              fontWeight: "bold",
-              textAlign: "center",
+              color: 'white',
+              fontWeight: 'bold',
+              textAlign: 'center',
             }}
           >
             Sign in
@@ -171,15 +182,14 @@ const LoginScreen = (props) => {
           <Text
             style={{
               fontSize: 15,
-              color: "black",
-              fontWeight: "bold",
-              textAlign: "center",
+              color: 'black',
+              fontWeight: 'bold',
+              textAlign: 'center',
             }}
           >
             Create new account
           </Text>
         </TouchableOpacity>
-        
       </View>
     </SafeAreaView>
   );
