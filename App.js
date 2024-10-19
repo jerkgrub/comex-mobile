@@ -46,8 +46,9 @@ export default function App() {
               headerShown: false,
             }}
           >
-            <Stack.Screen name="Front" component={DrawerNavigator} />
+            
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Front" component={DrawerNavigator} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Drawer" component={DrawerNavigator} />
