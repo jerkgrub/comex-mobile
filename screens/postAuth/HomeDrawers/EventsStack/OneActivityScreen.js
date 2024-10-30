@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useFetchUserData from "../../../../hooks/useFetchUserData";
+import api from "../../../../hooks/api";
 
 const { height } = Dimensions.get("window");
 

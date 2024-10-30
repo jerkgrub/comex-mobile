@@ -141,7 +141,7 @@ const RegisterScreen = ({ navigation }) => {
     <ScrollView>
       <View style={{ padding: 20 }}>
         <View style={{ alignItems: "center", marginVertical: 20 }}>
-          <Text style={styles.title}>Create Your Account</Text>
+          <Text style={styles.title}>Create an Account</Text>
         </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -179,7 +179,7 @@ const RegisterScreen = ({ navigation }) => {
           <DepInput value={u_dep} setValue={setUDep} />
 
           <TextInput
-            placeholder="Student Number"
+            placeholder="ID Number"
             placeholderTextColor={"#818181"}
             value={u_studnum}
             onChangeText={(text) => setUStudnum(text)}
@@ -189,7 +189,7 @@ const RegisterScreen = ({ navigation }) => {
           <DateInput
             value={u_datehired}
             setValue={setUDateHired}
-            placeholder={"Date Hired"}
+            placeholder={"Tap to input Date Hired"}
           />
           <TextInput
             placeholder="Email"

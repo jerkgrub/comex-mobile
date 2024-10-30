@@ -30,7 +30,7 @@ const UserInput = ({ label, value, setValue, placeholder }) => {
           onValueChange={(itemValue) => setValue(itemValue)}
           style={{ flex: 1 }}
         >
-          <Picker.Item label="What are you?" value="other" />
+          <Picker.Item label="Select your role" value="other" />
           <Picker.Item label="Student" value="student" />
           <Picker.Item label="Teacher" value="teacher" />
           <Picker.Item label="ASP (Admin Support Personnel)" value="asp" />

@@ -30,7 +30,7 @@ const DepInput = ({ label, value, setValue, placeholder }) => {
           onValueChange={(itemValue) => setValue(itemValue)}
           style={{ flex: 1 }}
         >
-          <Picker.Item label="What department are you?" value="other" />
+          <Picker.Item label="Select your department" value="other" />
           <Picker.Item label="College of Dentistry" value="College of Dentistry" />
           <Picker.Item label="School of Optometry" value="School of Optometry" />
           <Picker.Item label="School of Health Sciences" value="School of Health Sciences" />

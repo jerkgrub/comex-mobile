@@ -106,7 +106,7 @@ const WelcomeScreen = ({navigation}) => {
                             fontWeight: "bold",
                             textAlign: "center",
                         }}
-                        >Register</Text>
+                        >Sign Up</Text>
                     </TouchableOpacity>
                     
                 </View>

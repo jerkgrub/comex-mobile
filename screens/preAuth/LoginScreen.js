@@ -187,7 +187,7 @@ const LoginScreen = (props) => {
               textAlign: 'center',
             }}
           >
-            Create new account
+            Don't have an account?
           </Text>
         </TouchableOpacity>
       </View>
