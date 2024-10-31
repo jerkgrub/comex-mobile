@@ -12,8 +12,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const DrawerList = [
   { icon: "home-outline", label: "Home", navigateTo: "HomeStack" },
   { icon: "information-outline", label: "About Us", navigateTo: "About Us" },
+  { icon: "format-color-highlight", label: "Highlights", navigateTo: "About Us" },
   // { icon: "shield-sword", label: "NSTP", navigateTo: "NSTP" },
-  { icon: "calendar-multiple", label: "Events", navigateTo: "Events" },
+  { icon: "calendar-multiple", label: "Activities", navigateTo: "Events" },
   // { icon: "form-select", label: "ComEx Forms", navigateTo: "ComEx Forms" },
   // {
   //   icon: "recycle",

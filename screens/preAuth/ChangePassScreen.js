@@ -69,23 +69,9 @@ const ChangePassScreen =({navigation})=>{
                 style={{
                     marginVertical: 5,
                 }}>
-
-                    <TextInput 
-                    placeholder="Username"
-                    placeholderTextColor={"#818181"}
-                    value={theUsername}
-                    onChangeText={(text)=>{setTheUsername(text)}}
-                    style={{
-                        fontSize: 15,
-                        padding: 18,
-                        backgroundColor: "#e7e7e7",
-                        borderRadius: 10,
-                        marginVertical: 5,
-                    }}
-                    />
                     
                     <PasswordInput 
-                    placeholder="Old Password"
+                    placeholder="Current Password"
                     value={oldPass}
                     setValue={setOldpass}
                     />
@@ -118,7 +104,7 @@ const ChangePassScreen =({navigation})=>{
                         fontWeight: "bold",
                         textAlign: "center",
                     }}
-                    >Change Password</Text>
+                    >Save Changes</Text>
                 </TouchableOpacity>
 
             </View>

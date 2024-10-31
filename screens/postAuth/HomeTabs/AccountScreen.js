@@ -7,7 +7,9 @@ import {
 } from "react-native";
 
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome5';
 import React, { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -153,7 +155,7 @@ const AccountScreen =(props)=>{
                     }}
                     >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Icon name="card-account-details" size={24} color="black" />
+                        <MaterialCommunityIcons name="card-account-details" size={24} color="black" />
                         <Text style={{
                         fontSize: 15,
                         color: "black",
@@ -161,7 +163,7 @@ const AccountScreen =(props)=>{
                         textAlign: "justify",
                         paddingLeft: 10,
                         }}
-                        >My Details</Text>
+                        >Edit Profile</Text>
                     </View>
                     </TouchableOpacity>
                     
@@ -175,7 +177,7 @@ const AccountScreen =(props)=>{
                     }}
                     >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Icon name="lock-reset" size={24} color="black" />
+                        <MaterialCommunityIcons name="lock-reset" size={24} color="black" />
                         <Text style={{
                         fontSize: 15,
                         color: "black",
@@ -184,6 +186,72 @@ const AccountScreen =(props)=>{
                         paddingLeft: 10,
                         }}
                         >Change Password</Text>
+                    </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                    onPress={goChangePass}
+                    style={{
+                        // backgroundColor: "#2a2aa5",
+                        paddingVertical: 20,
+                        borderRadius: 10,
+                        paddingLeft: 10,
+                    }}
+                    >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialIcons name="diversity-3" size={24} color="black" />
+                        <Text style={{
+                        fontSize: 15,
+                        color: "black",
+                        // fontWeight: "bold",
+                        textAlign: "justify",
+                        paddingLeft: 10,
+                        }}
+                        >View Participated Activities</Text>
+                    </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                    onPress={goChangePass}
+                    style={{
+                        // backgroundColor: "#2a2aa5",
+                        paddingVertical: 20,
+                        borderRadius: 10,
+                        paddingLeft: 10,
+                    }}
+                    >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <FontAwesome6 name="clipboard-check" size={24} color="black" />
+                        <Text style={{
+                        fontSize: 15,
+                        color: "black",
+                        // fontWeight: "bold",
+                        textAlign: "justify",
+                        paddingLeft: 10,
+                        }}
+                        >View Registered Activities</Text>
+                    </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                    onPress={goChangePass}
+                    style={{
+                        // backgroundColor: "#2a2aa5",
+                        paddingVertical: 20,
+                        borderRadius: 10,
+                        paddingLeft: 10,
+                    }}
+                    >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="download-box-outline" size={24} color="black" />
+                        <Text style={{
+                        fontSize: 15,
+                        color: "black",
+                        // fontWeight: "bold",
+                        textAlign: "justify",
+                        paddingLeft: 10,
+                        }}
+                        >Download Certificates</Text>
                     </View>
                     </TouchableOpacity>
 
