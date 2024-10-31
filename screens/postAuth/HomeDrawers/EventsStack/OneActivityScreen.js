@@ -1,10 +1,7 @@
-import { Dimensions, View, Text, StyleSheet, SafeAreaView, ImageBackground, Alert } from "react-native";
-import React, { useState, useEffect } from "react";
+import { Dimensions, View, Text, StyleSheet, SafeAreaView, ImageBackground } from "react-native";
+import React, { useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import useFetchUserData from "../../../../hooks/useFetchUserData";
-import api from "../../../../hooks/api";
 
 const { height } = Dimensions.get("window");
 
@@ -13,18 +10,8 @@ const OneActivityScreen = () => {
   const route = useRoute();
   const activity = route.params?.activity;  // Safely access activity
 
-  const [parsedUser, setParsedUser] = useState(null);
-
   useEffect(() => {
-    const fetchUser = async () => {
-      const user = await AsyncStorage.getItem("user");
-      if (user) {
-        const parsedUserData = JSON.parse(user);
-        console.log("Parsed User Data:", parsedUserData);  // Log user data
-        setParsedUser(parsedUserData);
-      }
-    };
-    fetchUser();
+    // Add any setup logic here if necessary
   }, []);
 
   const formatDate = (dateString) => {
@@ -39,73 +26,8 @@ const OneActivityScreen = () => {
     return new Date(`1970-01-01T${timeString}`).toLocaleTimeString(undefined, options);
   };
 
-  const joinActivity = async () => {
-    if (!parsedUser) {
-      Alert.alert("Error", "User information not found. Please log in again.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://192.168.43.82:8000/api/activity/get/attendee/${activity._id}`);
-      const result = await response.json();
-
-      if (response.ok) {
-        const attendees = result.attendees;
-        const hasRegistered = attendees.some(attendee => attendee.at_email === parsedUser.email);
-
-        if (hasRegistered) {
-          Alert.alert("Error", "You have already registered for this activity!");
-        } else {
-          Alert.alert(
-            "Register",
-            "Do you want to register for this activity?",
-            [
-              {
-                text: "Cancel",
-                style: "cancel"
-              },
-              {
-                text: "Yes",
-                onPress: async () => {
-                  const attendee = {
-                    at_email: parsedUser.email,
-                    at_fname: parsedUser.u_fname,
-                    at_lname: parsedUser.u_lname,
-                    at_mnum: parsedUser.u_mnum
-                  };
-
-                  try {
-                    const registerResponse = await fetch(`http://192.168.43.82:8000/api/activity/add/attendee/${activity._id}`, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json"
-                      },
-                      body: JSON.stringify(attendee)
-                    });
-
-                    const registerResult = await registerResponse.json();
-
-                    if (registerResponse.ok) {
-                      Alert.alert("Success", "You have successfully registered for the activity!");
-                    } else {
-                      Alert.alert("Error", registerResult.message || "Failed to join the activity.");
-                    }
-                  } catch (error) {
-                    console.error("Error registering for activity:", error);
-                    Alert.alert("Error", "An error occurred while registering for the activity.");
-                  }
-                }
-              }
-            ]
-          );
-        }
-      } else {
-        Alert.alert("Error", result.message || "Failed to fetch attendees.");
-      }
-    } catch (error) {
-      console.error("Error fetching attendees:", error);
-      Alert.alert("Error", "An error occurred while fetching activity attendees.");
-    }
+  const joinActivity = () => {
+    navigation.navigate("Register Activity", { activity });
   };
 
   if (!activity) {
